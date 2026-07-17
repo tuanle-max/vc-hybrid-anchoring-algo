@@ -1,0 +1,7 @@
+Metric,Value
+BatchSize,500
+CacheHitRatePercent_WithCache,99.80
+CacheHitRatePercent_WithoutCache,0.00
+TotalTimeWithCacheMs,360.53
+TotalTimeWithoutCacheMs,37574.07
+SpeedupMultiplier,104.22

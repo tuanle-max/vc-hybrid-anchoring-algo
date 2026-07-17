@@ -1,0 +1,7 @@
+Metric,Value
+TotalAttempts,1000
+RevokedCount,300
+FalseAcceptances,0
+FalseRejections,0
+FalseAcceptanceRatePercent,0.00
+FalseRejectionRatePercent,0.00

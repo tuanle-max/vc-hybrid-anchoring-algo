@@ -1,0 +1,33 @@
+{
+  "name": "vc-hybrid-anchoring-algo",
+  "version": "1.0.0",
+  "description": "VC Hybrid Anchoring Algorithm Experimental Phase",
+  "main": "dist/src/b0_centralized/issuer.js",
+  "scripts": {
+    "build": "tsc",
+    "test": "jest",
+    "benchmark:latency": "ts-node benchmarks/latency_throughput.ts",
+    "benchmark:revocation": "ts-node benchmarks/revocation_test.ts",
+    "benchmark:comparison": "ts-node benchmarks/baseline_comparison.ts",
+    "benchmark:granular": "ts-node benchmarks/granular_latency_benchmark.ts",
+    "benchmark:ablation": "ts-node benchmarks/ablation_benchmark.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "algosdk": "^3.6.0",
+    "csv-writer": "^1.6.0",
+    "did-jwt": "^8.0.18",
+    "did-resolver": "^5.0.1",
+    "ethers": "^6.17.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^30.0.0",
+    "@types/node": "^26.1.1",
+    "jest": "^30.4.2",
+    "ts-jest": "^29.4.11",
+    "ts-node": "^10.9.2",
+    "typescript": "5.5.3"
+  }
+}
