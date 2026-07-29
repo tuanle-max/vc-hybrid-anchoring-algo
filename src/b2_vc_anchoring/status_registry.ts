@@ -53,7 +53,7 @@ export async function anchorStatusToMainnet(
   issuerAccount: algosdk.Account,
   rootHash: string,
   epochVersion: number
-): Promise<{ txId: string; feeCharged: number; durationMs: number }> {
+): Promise<{ txId: string; feeCharged: number; durationMs: number; confirmedRound: number }> {
   const start = performance.now();
 
   const suggestedParams = await algodClient.getTransactionParams().do();
@@ -85,11 +85,16 @@ export async function anchorStatusToMainnet(
     feeCharged = Number(ptx.txn.txn.fee);
   }
 
+  const confirmedRound = ptx && (ptx as any).confirmedRound
+    ? Number((ptx as any).confirmedRound)
+    : 0;
+
   const end = performance.now();
 
   return {
     txId,
     feeCharged,
     durationMs: end - start,
+    confirmedRound,
   };
 }

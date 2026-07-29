@@ -46,7 +46,7 @@ async function compileTeal(tealCode: string): Promise<Uint8Array> {
  */
 export async function deployApplication(
   issuerAccount: algosdk.Account
-): Promise<{ appId: number; feeCharged: number; txId: string }> {
+): Promise<{ appId: number; feeCharged: number; txId: string; confirmedRound: number }> {
   const approvalBytes = await compileTeal(APPROVAL_TEAL);
   const clearBytes = await compileTeal(CLEAR_TEAL);
 
@@ -81,10 +81,15 @@ export async function deployApplication(
     throw new Error(`Failed to retrieve application ID for creation transaction: ${txId}`);
   }
 
+  const confirmedRound = ptx && (ptx as any).confirmedRound
+    ? Number((ptx as any).confirmedRound)
+    : 0;
+
   return {
     appId: Number(appId),
     feeCharged,
     txId,
+    confirmedRound,
   };
 }
 
@@ -95,7 +100,7 @@ export async function updateStatusRootB6(
   issuerAccount: algosdk.Account,
   appId: number,
   newRoot: string
-): Promise<{ txId: string; feeCharged: number; durationMs: number }> {
+): Promise<{ txId: string; feeCharged: number; durationMs: number; confirmedRound: number }> {
   const start = performance.now();
 
   const suggestedParams = await algodClient.getTransactionParams().do();
@@ -121,11 +126,16 @@ export async function updateStatusRootB6(
     feeCharged = Number(ptx.txn.txn.fee);
   }
 
+  const confirmedRound2 = ptx && (ptx as any).confirmedRound
+    ? Number((ptx as any).confirmedRound)
+    : 0;
+
   const end = performance.now();
 
   return {
     txId,
     feeCharged,
     durationMs: end - start,
+    confirmedRound: confirmedRound2,
   };
 }

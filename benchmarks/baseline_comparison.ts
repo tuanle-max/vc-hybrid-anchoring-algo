@@ -8,20 +8,43 @@ import { anchorStatusToMainnet } from '../src/b2_vc_anchoring/status_registry';
 const ISSUER_MNEMONIC = "depth target toddler canyon chase can sort select sudden execute planet garbage champion weasel ritual okay scout lyrics syrup mystery regular vessel today able try";
 const ITERATIONS = 10;
 
+interface TxRecord {
+  baseline: string;
+  txid: string;
+  confirmed_round: number;
+  fee_microalgos: number;
+  conf_ms: number;
+}
+
 async function runComparison() {
   console.log("Starting Baseline Comparison: B2 (Decoupled Note) vs. B6 (Smart Contract) on Algorand Mainnet...");
   
   const issuerAccount = algosdk.mnemonicToSecretKey(ISSUER_MNEMONIC);
   console.log(`Issuer address: ${issuerAccount.addr.toString()}`);
 
+  const records: TxRecord[] = [];
+
   // -----------------------------------------------------------------
   // DEPLOY B6 CONTRACT
   // -----------------------------------------------------------------
   console.log("\nDeploying B6 Smart Contract to Mainnet...");
+  const deployStart = performance.now();
   const deployRes = await deployApplication(issuerAccount);
+  const deployEnd = performance.now();
+  const deployDurationMs = deployEnd - deployStart;
+
   console.log(`B6 Contract deployed successfully! App ID: ${deployRes.appId}`);
   console.log(`Deployment transaction ID: ${deployRes.txId}`);
+  console.log(`Deployment confirmed round: ${deployRes.confirmedRound}`);
   console.log(`Deployment cost: ${deployRes.feeCharged} microAlgos`);
+
+  records.push({
+    baseline: 'B6_DEPLOY',
+    txid: deployRes.txId,
+    confirmed_round: deployRes.confirmedRound,
+    fee_microalgos: deployRes.feeCharged,
+    conf_ms: Number(deployDurationMs.toFixed(2)),
+  });
 
   // -----------------------------------------------------------------
   // RUN B6 BENCHMARK (10 App Calls)
@@ -37,8 +60,16 @@ async function runComparison() {
     const res = await updateStatusRootB6(issuerAccount, deployRes.appId, mockRoot);
     b6Latencies.push(res.durationMs);
     b6Fees.push(res.feeCharged);
+
+    records.push({
+      baseline: 'B6',
+      txid: res.txId,
+      confirmed_round: res.confirmedRound,
+      fee_microalgos: res.feeCharged,
+      conf_ms: Number(res.durationMs.toFixed(2)),
+    });
     
-    console.log(`   Completed in ${res.durationMs.toFixed(2)}ms (Fee: ${res.feeCharged} microAlgos)`);
+    console.log(`   Completed in ${res.durationMs.toFixed(2)}ms (TxID: ${res.txId}, Round: ${res.confirmedRound}, Fee: ${res.feeCharged} microAlgos)`);
   }
 
   // -----------------------------------------------------------------
@@ -55,8 +86,16 @@ async function runComparison() {
     const res = await anchorStatusToMainnet(issuerAccount, mockRoot, i + 1);
     b2Latencies.push(res.durationMs);
     b2Fees.push(res.feeCharged);
+
+    records.push({
+      baseline: 'B2',
+      txid: res.txId,
+      confirmed_round: res.confirmedRound,
+      fee_microalgos: res.feeCharged,
+      conf_ms: Number(res.durationMs.toFixed(2)),
+    });
     
-    console.log(`   Completed in ${res.durationMs.toFixed(2)}ms (Fee: ${res.feeCharged} microAlgos)`);
+    console.log(`   Completed in ${res.durationMs.toFixed(2)}ms (TxID: ${res.txId}, Round: ${res.confirmedRound}, Fee: ${res.feeCharged} microAlgos)`);
   }
 
   // -----------------------------------------------------------------
@@ -77,9 +116,8 @@ async function runComparison() {
   console.log("=============================================");
 
   const csvRows = [
-    "Baseline,AverageLatencyMs,AverageFeeMicroAlgos,DeploymentFeeMicroAlgos",
-    `B2,${avgB2Latency.toFixed(2)},${avgB2Fee.toFixed(2)},0`,
-    `B6,${avgB6Latency.toFixed(2)},${avgB6Fee.toFixed(2)},${deployRes.feeCharged}`
+    "Baseline,txid,confirmed_round,fee_microalgos,conf_ms",
+    ...records.map(r => `${r.baseline},${r.txid},${r.confirmed_round},${r.fee_microalgos},${r.conf_ms}`)
   ];
 
   const logsDir = path.join(__dirname, '../data/mainnet_logs');
@@ -94,4 +132,5 @@ async function runComparison() {
 
 runComparison().catch((err) => {
   console.error("Comparison run failed with error:", err);
+  process.exit(1);
 });
