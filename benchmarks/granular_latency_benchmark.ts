@@ -8,7 +8,7 @@ import { verifyCredentialB2 } from '../src/b2_vc_anchoring/verifier';
 import { VerifiableCredential } from '../src/b2_vc_anchoring/types';
 
 const ISSUER_MNEMONIC = "depth target toddler canyon chase can sort select sudden execute planet garbage champion weasel ritual okay scout lyrics syrup mystery regular vessel today able try";
-const BENCHMARK_SIZE = 100;
+const BENCHMARK_SIZE = 1000;
 
 function percentile(arr: number[], p: number): number {
   if (arr.length === 0) return 0;
@@ -18,7 +18,7 @@ function percentile(arr: number[], p: number): number {
 }
 
 async function runGranularBenchmark() {
-  console.log("Starting Granular Latency Benchmark (100 Credentials) on Algorand Mainnet...");
+  console.log("Starting Granular Latency Benchmark (1000 Credentials) on Algorand Mainnet...");
   
   const issuerAccount = algosdk.mnemonicToSecretKey(ISSUER_MNEMONIC);
   const issuerKeys = generateDIDKeyPair();
@@ -97,7 +97,7 @@ async function runGranularBenchmark() {
   };
 
   console.log("\n=======================================================");
-  console.log("Granular Latency Metrics (100 Credentials with Cache Enabled):");
+  console.log("Granular Latency Metrics (1000 Credentials with Cache Enabled):");
   console.log(`- Crypto Latency (T_crypto):`);
   console.log(`    Mean: ${stats.crypto.mean.toFixed(2)}ms, p95: ${stats.crypto.p95.toFixed(2)}ms, p99: ${stats.crypto.p99.toFixed(2)}ms`);
   console.log(`- Network Latency (T_network):`);
