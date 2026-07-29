@@ -1,0 +1,4 @@
+Metric,MeanMs,SDMs,CI95_LowMs,CI95_HighMs,p95Ms,p99Ms
+T_crypto,1.47,0.62,1.44,1.51,2.36,2.79
+T_network,0.00,0.00,0.00,0.00,0.00,0.01
+T_total,1.48,0.62,1.44,1.52,2.37,2.80
