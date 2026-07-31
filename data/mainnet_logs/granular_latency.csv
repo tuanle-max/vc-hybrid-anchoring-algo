@@ -1,4 +1,0 @@
-Metric,MeanMs,p95Ms,p99Ms
-T_crypto,1.99,2.85,3.46
-T_network,0.07,0.00,0.02
-T_total,2.06,2.86,3.47
