@@ -9,6 +9,10 @@ It compares:
 - **Baseline 6 (B6)**: A smart-contract-based batch status commitment model storing the Merkle root in the contract's Global State.
 
 ---
+## Dataset Information
+
+- `data/algo-usd-max.csv`: Historical daily price index for ALGO/USD spanning from 2019 to 2026 (from Coingecko https://www.coingecko.com/en/coins/algorand/historical_data), utilized for the Monte Carlo cost predictability bootstrapping simulation.
+- `data/mainnet\_logs/`: Contains raw output logs, aggregated CSV metrics, and figures generated during benchmark executions.
 
 ## Repository Structure
 
